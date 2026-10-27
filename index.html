@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="我的時間"><title>我的時間 v1.5｜時間紀錄</title>
+<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="我的時間"><title>我的時間 v1.6｜時間紀錄</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;color:#182336;background:#f3f5f9}*{box-sizing:border-box}body{margin:0}main{max-width:650px;margin:auto;padding:18px 15px 85px}h1{font-size:27px;margin:6px 0}h2{font-size:17px;margin:0 0 13px}.muted{color:#667085;font-size:13px}.card{background:white;border-radius:19px;padding:18px;margin:13px 0;box-shadow:0 2px 14px #10182809}.hero{background:#17243c;color:white}.hero .muted{color:#b8c6df}.clock{font-size:38px;font-weight:750;font-variant-numeric:tabular-nums;margin:14px 0}button,input,select{font:inherit}button{border:0;border-radius:12px;padding:12px 15px;font-weight:650;cursor:pointer}button.primary{background:#5b76e8;color:white}button.stop{background:#ed6a61;color:white}button.secondary{background:#eef1f8;color:#25324b}button.danger{background:#fff0ee;color:#a63b35}button:disabled{opacity:.45}.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.grow{flex:1}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cat{background:#f3f5f9;font-size:12px;padding:12px 3px}.cat.active{outline:2px solid #5b76e8;background:#eaf0ff}input,select{width:100%;border:1px solid #d6dce8;background:#fff;border-radius:10px;padding:11px;color:#182336}label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}.stat{flex:1;background:#f3f5f9;padding:12px;border-radius:12px;text-align:center}.stat strong{display:block;font-size:19px}.timeline{display:flex;height:23px;border-radius:8px;overflow:hidden;background:#edf0f5;margin:10px 0}.timeline>div{min-width:0}.entry{border-top:1px solid #edf0f5;padding:11px 0;display:flex;justify-content:space-between;gap:8px}.entry small{color:#667085}.entry button{padding:7px;font-size:12px}.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:13px}.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}canvas{display:block;margin:10px auto;max-width:100%}.notice{padding:10px;background:#fff5db;border-radius:10px;color:#75520c;font-size:12px}.hidden{display:none}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.actions button{font-size:12px}.wide{width:100%}
 .quickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.quickgrid button{padding:13px 5px}.hourgrid{display:grid;grid-template-columns:45px 1fr;gap:0}.hourlabel{font-size:11px;color:#667085;border-top:1px solid #e9edf4;padding-top:3px}.hourlane{height:39px;position:relative;border-top:1px solid #e9edf4}.hourblock{position:absolute;top:0;bottom:0;border-radius:5px;opacity:.9;min-width:2px}.hourgrid .hourlane:nth-child(4n){background:#fafbfe}.weekstack{display:flex;overflow:hidden;border-radius:6px;height:15px;background:#edf0f5;flex:1}.weekstack span{height:100%}#quickStatus{margin-top:6px} </style></head><body><main>
@@ -13,7 +13,7 @@
 <section class="card"><h2>手動補記／修改</h2><form id="form"><input type="hidden" id="editId"><label>日期</label><input type="date" id="entryDate" required><div class="row"><div class="grow"><label>開始</label><input type="time" id="start" required></div><div class="grow"><label>結束</label><input type="time" id="end" required></div></div><div class="muted">結束早於開始代表跨午夜，最長可記 24 小時。</div><label>分類</label><select id="entryCat"></select><label>活動名稱</label><input id="entryTitle" maxlength="100" placeholder="例如：晚餐"><div class="row" style="margin-top:12px"><button type="submit" class="primary grow" id="save">儲存紀錄</button><button type="button" class="secondary hidden" id="cancel">取消修改</button></div></form></section>
 <section class="card"><div class="row"><h2 class="grow">每日儀表板</h2><input id="viewDate" type="date" style="width:155px"></div><div class="row"><div class="stat"><strong id="logged">0 分鐘</strong><span class="muted">已覆蓋時間</span></div><div class="stat"><strong id="missing">24h</strong><span class="muted">未記錄時間</span></div></div><div class="muted" style="margin-top:14px">24 小時活動時間軸（重疊時段以最新建立的紀錄為準）</div><div id="timeline" class="timeline"></div><details><summary style="font-weight:650;cursor:pointer;margin:12px 0">展開每小時活動時間軸</summary><div class="muted">每列代表 1 小時，色塊代表已記錄的活動；重疊時段按最新建立的紀錄顯示。</div><div id="hourTimeline" class="hourgrid" style="margin:12px 0"></div></details><canvas id="chart" width="280" height="280" aria-label="時間分類圓餅圖"></canvas><div id="legend" class="legend"></div><div id="overlap" class="notice hidden" style="margin-top:12px"></div></section>
 <section class="card"><h2>最近 7 天分析</h2><div class="muted">以儀表板所選日期為最後一天，統計各日實際覆蓋時間；重疊時段不重複計算。</div><div id="weekBars" style="margin-top:15px"></div><h2 style="margin-top:18px">7 天分類合計</h2><div id="weekLegend" class="legend"></div></section>
-<section class="card"><h2>Google 日曆（v1.5 測試）</h2><p class="muted">唯讀連接：只顯示選定日期的行程，不會修改日曆，也不會自動寫入時間紀錄。</p><label for="googleClientId">Google OAuth 用戶端 ID</label><input id="googleClientId" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off"><div class="actions"><button type="button" class="primary" id="googleConnect">連接 Google 日曆</button><button type="button" class="secondary" id="googleRefresh" disabled>讀取所選日期</button><button type="button" class="secondary" id="googleDisconnect">中斷連接</button></div><p class="muted" id="googleStatus" aria-live="polite">尚未連接。請填入 Google Cloud 的「用戶端 ID」（不是用戶端密鑰）。</p><div id="googleEvents"></div></section>
+<section class="card"><h2>Google 日曆（v1.6）</h2><p class="muted">先預覽行程，選擇要匯入的活動，確認實際時間與分類後才會儲存。不會修改 Google 日曆。</p><label for="googleClientId">Google OAuth 用戶端 ID</label><input id="googleClientId" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off" readonly><p class="muted">已預設本 App 的 Google 用戶端 ID，不需要重新輸入。</p><div class="actions"><button type="button" class="primary" id="googleConnect">連接 Google 日曆</button><button type="button" class="secondary" id="googleRefresh" disabled>讀取所選日期</button><button type="button" class="secondary" id="googleDisconnect">中斷連接</button></div><p class="muted" id="googleStatus" aria-live="polite">尚未連接。用戶端 ID 已設定，請按「連接 Google 日曆」。</p><div id="googleEvents"></div><div id="googleImportPanel" class="hidden" style="border-top:1px solid #edf0f5;margin-top:12px;padding-top:12px"><h3>確認實際時間後匯入</h3><form id="googleImportForm"><label>活動名稱</label><input id="googleImportTitle" maxlength="100" required><label>日期</label><input id="googleImportDate" type="date" required><div class="row"><div class="grow"><label>實際開始</label><input id="googleImportStart" type="time" required></div><div class="grow"><label>實際結束</label><input id="googleImportEnd" type="time" required></div></div><label>分類</label><select id="googleImportCat"></select><p class="muted">結束時間早於開始時間代表跨午夜；若與已有紀錄重疊，儲存前會提醒。</p><div class="actions"><button type="submit" class="primary">確認匯入</button><button type="button" class="secondary" id="googleImportCancel">取消</button></div></form></div></section>
 <section class="card"><h2>🌙 整理今天</h2><p class="muted">先整理目前瀏覽器已有的手動紀錄。未連接 Google 日曆或 Mac，資料不會自動同步。</p><button id="reviewToday" class="primary wide" type="button">整理今天</button><div id="reviewOutput" style="margin-top:12px" aria-live="polite"></div></section>
 <section class="card"><h2>當天紀錄</h2><div id="entries"></div></section>
 <section class="card"><h2>備份與匯出</h2><div class="muted">CSV 可用 Google Sheets 開啟；JSON 可以完整備份及還原。</div><div class="actions"><button class="secondary" id="csv">匯出 CSV</button><button class="secondary" id="backup">備份 JSON</button><button class="secondary" id="restoreBtn">還原 JSON</button><input type="file" id="restore" accept=".json,application/json" class="hidden"></div><p class="muted">資料儲存在此網站的瀏覽器空間。不同網址、私人瀏覽模式或清除網站資料可能使紀錄無法存取。請定期備份。</p></section>
@@ -39,7 +39,7 @@ function drawCats(){ $("cats").innerHTML=categories.map(([name,color,emoji])=>`<
 $("entryCat").innerHTML=categories.map(c=>`<option>${c[0]}</option>`).join("");
 function ms(date,time){let [h,m]=time.split(":").map(Number);let [y,mo,d]=date.split("-").map(Number);return new Date(y,mo-1,d,h,m).getTime()}
 function resetForm(){ $("form").reset();$("editId").value="";$("entryDate").value=localDate(new Date());$("save").textContent="儲存紀錄";$("cancel").classList.add("hidden")}
-$("form").onsubmit=e=>{e.preventDefault();let start=ms($("entryDate").value,$("start").value),end=ms($("entryDate").value,$("end").value);if(end<=start)end+=86400000;if(end-start>86400000||!Number.isFinite(start)){alert("請檢查開始與結束時間。");return}let id=$("editId").value||uid(),old=records.find(r=>r.id===id),r={id,start,end,category:$("entryCat").value,title:$("entryTitle").value.trim(),created:old?.created||Date.now()};records=records.filter(x=>x.id!==id).concat(r);if(!persist())return;resetForm();$("viewDate").value=localDate(new Date(start));render()};
+$("form").onsubmit=e=>{e.preventDefault();let start=ms($("entryDate").value,$("start").value),end=ms($("entryDate").value,$("end").value);if(end<=start)end+=86400000;if(end-start>86400000||!Number.isFinite(start)){alert("請檢查開始與結束時間。");return}let id=$("editId").value||uid(),old=records.find(r=>r.id===id),r={id,start,end,category:$("entryCat").value,title:$("entryTitle").value.trim(),created:old?.created||Date.now(),...(old?.googleEventKey?{googleEventKey:old.googleEventKey}:{})};records=records.filter(x=>x.id!==id).concat(r);if(!persist())return;resetForm();$("viewDate").value=localDate(new Date(start));render()};
 $("cancel").onclick=resetForm;
 document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{if(running){alert("目前正在計時。請先結束計時，再使用快速補記，避免重複計算。");return}const mins=Number(b.dataset.quick),end=Date.now(),start=end-mins*60000;const r={id:uid(),start,end,category:selected,title:$("activity").value.trim(),created:Date.now()};records.push(r);if(!persist()){records.pop();return}lastQuickId=r.id;$("undoQuick").classList.remove("hidden");$("quickStatus").textContent=`已補記 ${r.title||r.category} · ${mins} 分鐘（${localTime(new Date(start))}～${localTime(new Date(end))}）`;$("viewDate").value=localDate(new Date());render()});
 $("undoQuick").onclick=()=>{if(!lastQuickId)return;records=records.filter(r=>r.id!==lastQuickId);persist();lastQuickId=null;$("undoQuick").classList.add("hidden");$("quickStatus").textContent="已復原快速補記";render()};
@@ -75,13 +75,13 @@ let cv=$("chart"),ctx=cv.getContext("2d");ctx.clearRect(0,0,280,280);let pos=-Ma
 $("legend").innerHTML=Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([name,value])=>`<div><span class="dot" style="background:${colors[name]}"></span>${name} ${formatHours(value)}</div>`).join("");
 $("overlap").classList.toggle("hidden",overlap===0);$("overlap").textContent=`發現 ${formatHours(overlap)} 的重疊時段。圖表已去重，但建議檢查紀錄。`;
 let day=records.filter(r=>r.end>lo&&r.start<hi).sort((a,b)=>a.start-b.start);$("entries").innerHTML=day.length?day.map(r=>`<div class="entry"><div><strong>${safeText(r.title||r.category)}</strong><br><small>${new Date(r.start).toLocaleString("zh-TW",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false})} ～ ${new Date(r.end).toLocaleString("zh-TW",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false})} · ${r.category} · ${formatHours(r.end-r.start)}</small></div><div><button class="secondary" data-edit="${r.id}">修改</button> <button class="danger" data-delete="${r.id}">刪除</button></div></div>`).join(""):'<p class="muted">這一天還沒有紀錄。</p>';
-document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{if(confirm("確定刪除此筆紀錄？")){records=records.filter(r=>r.id!==b.dataset.delete);persist();render()}});
+document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{if(confirm("確定刪除此筆紀錄？")){records=records.filter(r=>r.id!==b.dataset.delete);persist();render();if(googleEventsCache.length)renderGoogleEvents()}});
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{let r=records.find(x=>x.id===b.dataset.edit);if(!r)return;let a=new Date(r.start),z=new Date(r.end);$("editId").value=r.id;$("entryDate").value=localDate(a);$("start").value=localTime(a);$("end").value=localTime(z);$("entryCat").value=r.category;$("entryTitle").value=r.title;$("save").textContent="更新紀錄";$("cancel").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth"})})}
 function download(name,content,type){let blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $("csv").onclick=()=>{let rows=[["ID","開始時間","結束時間","分類","活動","分鐘數"],...records.sort((a,b)=>a.start-b.start).map(r=>[r.id,new Date(r.start).toLocaleString("sv-SE"),new Date(r.end).toLocaleString("sv-SE"),r.category,r.title,((r.end-r.start)/60000).toFixed(1)])];let esc=x=>'"'+String(x).replace(/"/g,'""')+'"';download("我的時間_"+localDate(new Date())+".csv","\ufeff"+rows.map(r=>r.map(esc).join(",")).join("\r\n"),"text/csv;charset=utf-8")};
 $("backup").onclick=()=>download("我的時間_備份_"+localDate(new Date())+".json",JSON.stringify({version:1,records},null,2),"application/json");
 $("restoreBtn").onclick=()=>$("restore").click();
-$("restore").onchange=async e=>{let f=e.target.files?.[0];if(!f)return;try{let o=JSON.parse(await f.text());if(!Array.isArray(o.records)||!o.records.every(valid))throw Error("格式不正確");if(!confirm(`將匯入 ${o.records.length} 筆紀錄，並取代目前 ${records.length} 筆紀錄。確定嗎？`))return;records=o.records;persist();render();alert("還原完成")}catch(err){alert("無法還原："+err.message)}finally{e.target.value=""}};
+$("restore").onchange=async e=>{let f=e.target.files?.[0];if(!f)return;try{let o=JSON.parse(await f.text());if(!Array.isArray(o.records)||!o.records.every(valid))throw Error("格式不正確");if(!confirm(`將匯入 ${o.records.length} 筆紀錄，並取代目前 ${records.length} 筆紀錄。確定嗎？`))return;records=o.records;persist();render();if(googleEventsCache.length)renderGoogleEvents();alert("還原完成")}catch(err){alert("無法還原："+err.message)}finally{e.target.value=""}};
 
 function reviewDay(){
  const date=localDate(new Date()), lo=ms(date,"00:00"),hi=new Date(new Date(lo).setDate(new Date(lo).getDate()+1)).getTime();
@@ -106,40 +106,80 @@ function reviewDay(){
  $("reviewOutput").innerHTML=`<div class="notice">已整理今天 00:00 至 ${fmt(end)}。這是已記錄時間的摘要，不代表整天活動已完整。</div><p><strong>已記錄：${formatHours(total)}</strong></p>${summary||'<p class="muted">尚無紀錄。</p>'}<h3>待補記時段</h3>${gapsHtml?`<ul>${gapsHtml}</ul>`:'<p class="muted">目前沒有超過 5 分鐘的空白時段。</p>'}<h3>重疊時段</h3>${dupHtml?`<p class="muted">可能重複，請到「當天紀錄」檢查；不會自動刪除。</p><ul>${dupHtml}</ul>`:'<p class="muted">沒有偵測到重疊。</p>'}`;
  $("viewDate").value=date;render();
 }
-// Google Calendar read-only preview. Never write tokens or Google events into localStorage.
-let googleToken=null,googleTokenClient=null;
+// Google Calendar is read-only. Only user-confirmed imports enter local records.
+let googleToken=null,googleTokenClient=null,googleEventsCache=[],googleImportEvent=null;
 const CAL_SCOPE="https://www.googleapis.com/auth/calendar.readonly";
+const GOOGLE_CLIENT_ID="556468776888-b9da1hqbn0fub191mj3t8t234r4o3ou5.apps.googleusercontent.com";
+$("googleClientId").value=GOOGLE_CLIENT_ID;
+$("googleImportCat").innerHTML=categories.map(c=>`<option>${c[0]}</option>`).join("");
 const googleStatus=msg=>$("googleStatus").textContent=msg;
 function calendarDayBounds(date){const [y,m,d]=date.split("-").map(Number);return [new Date(y,m-1,d),new Date(y,m-1,d+1)]}
+function googleEventKey(e){return String(e.id||"")+"|"+String(e.start?.dateTime||e.start?.date||"")}
+function isImported(e){return records.some(r=>r.googleEventKey===googleEventKey(e))}
+function renderGoogleEvents(){
+ $("googleEvents").innerHTML=googleEventsCache.length?googleEventsCache.map((e,i)=>{
+  const allDay=!e.start?.dateTime, start=allDay?"全天":new Date(e.start.dateTime).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"});
+  const end=allDay?"":("～"+new Date(e.end?.dateTime||e.start.dateTime).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"}));
+  const done=isImported(e);
+  return `<div class="entry"><div><strong>${safeText(e.summary||"（無標題）")}</strong><br><small>${safeText(start+end)}${allDay?" · 全天行程":""}</small></div><div><button class="${done?"secondary":"primary"}" data-google-import="${i}" ${done?"disabled":""}>${done?"已匯入":"選擇匯入"}</button></div></div>`;
+ }).join(""):'<p class="muted">這一天沒有行程。</p>';
+ document.querySelectorAll("[data-google-import]").forEach(btn=>btn.onclick=()=>beginGoogleImport(googleEventsCache[Number(btn.dataset.googleImport)]));
+}
+function beginGoogleImport(e){
+ if(!e||isImported(e))return;
+ googleImportEvent=e;
+ const date=$("viewDate").value;
+ const start=e.start?.dateTime?new Date(e.start.dateTime):null;
+ const end=e.end?.dateTime?new Date(e.end.dateTime):null;
+ $("googleImportTitle").value=e.summary||"（無標題）";
+ $("googleImportDate").value=start?localDate(start):date;
+ $("googleImportStart").value=start?localTime(start):"09:00";
+ $("googleImportEnd").value=end?localTime(end):"10:00";
+ $("googleImportCat").value="其他";
+ $("googleImportPanel").classList.remove("hidden");
+ $("googleImportPanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function cancelGoogleImport(){googleImportEvent=null;$("googleImportPanel").classList.add("hidden")}
+$("googleImportCancel").onclick=cancelGoogleImport;
+$("googleImportForm").onsubmit=e=>{
+ e.preventDefault();if(!googleImportEvent)return;
+ if(isImported(googleImportEvent)){alert("這筆行程已經匯入，請到當天紀錄修改。");cancelGoogleImport();return}
+ const date=$("googleImportDate").value,begin=ms(date,$("googleImportStart").value);
+ let finish=ms(date,$("googleImportEnd").value);
+ if(finish<=begin)finish=new Date(new Date(finish).setDate(new Date(finish).getDate()+1)).getTime();
+ if(!Number.isFinite(begin)||!Number.isFinite(finish)||finish-begin>86400000||finish<=begin){alert("請檢查日期與時間。");return}
+ const overlap=records.some(r=>r.start<finish&&r.end>begin)||(running&&running.start<finish&&Date.now()>begin);
+ if(overlap&&!confirm("這段時間與現有紀錄重疊。儀表板會去重，但仍會保留兩筆紀錄。確定匯入嗎？"))return;
+ const r={id:uid(),start:begin,end:finish,category:$("googleImportCat").value,title:$("googleImportTitle").value.trim(),created:Date.now(),googleEventKey:googleEventKey(googleImportEvent)};
+ records.push(r);if(!persist()){records.pop();return}
+ $("viewDate").value=date;cancelGoogleImport();render();renderGoogleEvents();
+ googleStatus("已匯入活動到「我的時間」。Google 日曆沒有被修改。");
+};
 async function loadGoogleEvents(){
  if(!googleToken){googleStatus("請先連接 Google 日曆。");return}
  const date=$("viewDate").value,[start,end]=calendarDayBounds(date);
- googleStatus("正在讀取 "+date+" 的行程…");
+ googleStatus("正在讀取 "+date+" 的行程…");cancelGoogleImport();googleEventsCache=[];$("googleEvents").innerHTML="";
  try{
-  const qs=new URLSearchParams({calendarId:"primary",timeMin:start.toISOString(),timeMax:end.toISOString(),singleEvents:"true",orderBy:"startTime",maxResults:"250"});
+  const qs=new URLSearchParams({timeMin:start.toISOString(),timeMax:end.toISOString(),singleEvents:"true",orderBy:"startTime",maxResults:"250"});
   const response=await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events?"+qs,{headers:{Authorization:"Bearer "+googleToken}});
   if(!response.ok){if(response.status===401){googleToken=null;$("googleRefresh").disabled=true}throw Error("Google API 回應 "+response.status)}
-  const data=await response.json(),events=data.items||[];
-  const formatEvent=e=>{let when=e.start?.dateTime?new Date(e.start.dateTime).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"}):"全天";let title=safeText(e.summary||"（無標題）");return `<div class="entry"><div><strong>${title}</strong><br><small>${safeText(when)}</small></div></div>`};
-  $("googleEvents").innerHTML=events.length?events.map(formatEvent).join(""):'<p class="muted">這一天沒有行程。</p>';
-  googleStatus(`已讀取 ${date}：${events.length} 筆行程（僅供預覽，不會寫入紀錄）。`);
- }catch(err){googleStatus("讀取失敗："+err.message+"。請確認 API 已啟用、授權帳號正確。")}
+  const data=await response.json();googleEventsCache=data.items||[];
+  renderGoogleEvents();googleStatus(`已讀取 ${date}：${googleEventsCache.length} 筆行程。請選擇要匯入的活動。`);
+ }catch(err){googleStatus("讀取失敗："+err.message+"。請確認授權帳號與 API 設定。")}
 }
 $("googleConnect").onclick=()=>{
- const clientId=$("googleClientId").value.trim();
- if(!/^[^\s]+\.apps\.googleusercontent\.com$/.test(clientId)){googleStatus("請填入正確的 OAuth 用戶端 ID（以 .apps.googleusercontent.com 結尾）。");return}
  if(!window.google?.accounts?.oauth2){googleStatus("Google 登入程式尚未載入，請稍後重試或重新整理頁面。");return}
- googleTokenClient=google.accounts.oauth2.initTokenClient({client_id:clientId,scope:CAL_SCOPE,callback:response=>{
+ googleTokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:CAL_SCOPE,callback:response=>{
   if(response.error){googleStatus("授權失敗："+response.error);return}
   googleToken=response.access_token;$("googleRefresh").disabled=false;loadGoogleEvents();
  }});
- googleTokenClient.requestAccessToken({prompt:"consent"});
+ googleTokenClient.requestAccessToken({prompt:""});
 };
 $("googleRefresh").onclick=loadGoogleEvents;
-$("googleDisconnect").onclick=()=>{if(googleToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(googleToken,()=>{});googleToken=null;$("googleRefresh").disabled=true;$("googleEvents").innerHTML="";googleStatus("已中斷連接。")};
+$("googleDisconnect").onclick=()=>{if(googleToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(googleToken,()=>{});googleToken=null;$("googleRefresh").disabled=true;googleEventsCache=[];cancelGoogleImport();$("googleEvents").innerHTML="";googleStatus("已中斷連接。")};
 
 $("reviewToday").onclick=reviewDay;
-$("viewDate").onchange=render;
+$("viewDate").onchange=()=>{render();if(googleToken)loadGoogleEvents();else{googleEventsCache=[];$("googleEvents").innerHTML="";cancelGoogleImport()}};
 $("viewDate").value=localDate(new Date());resetForm();drawCats();drawPresets();updateClock();render();setInterval(()=>{if(running){updateClock();render()}},1000);
 document.addEventListener("visibilitychange",()=>{updateClock();render()});
 try{let probe="mytime.test";localStorage.setItem(probe,"ok");localStorage.removeItem(probe)}catch{alert("此開啟環境不支援本機儲存。請使用 Safari 開啟已部署的 HTTPS 網站。")}
