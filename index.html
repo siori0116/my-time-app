@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="我的時間"><title>我的時間 v1.3｜時間紀錄</title>
+<meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="我的時間"><title>我的時間 v1.4｜時間紀錄</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;color:#182336;background:#f3f5f9}*{box-sizing:border-box}body{margin:0}main{max-width:650px;margin:auto;padding:18px 15px 85px}h1{font-size:27px;margin:6px 0}h2{font-size:17px;margin:0 0 13px}.muted{color:#667085;font-size:13px}.card{background:white;border-radius:19px;padding:18px;margin:13px 0;box-shadow:0 2px 14px #10182809}.hero{background:#17243c;color:white}.hero .muted{color:#b8c6df}.clock{font-size:38px;font-weight:750;font-variant-numeric:tabular-nums;margin:14px 0}button,input,select{font:inherit}button{border:0;border-radius:12px;padding:12px 15px;font-weight:650;cursor:pointer}button.primary{background:#5b76e8;color:white}button.stop{background:#ed6a61;color:white}button.secondary{background:#eef1f8;color:#25324b}button.danger{background:#fff0ee;color:#a63b35}button:disabled{opacity:.45}.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.grow{flex:1}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cat{background:#f3f5f9;font-size:12px;padding:12px 3px}.cat.active{outline:2px solid #5b76e8;background:#eaf0ff}input,select{width:100%;border:1px solid #d6dce8;background:#fff;border-radius:10px;padding:11px;color:#182336}label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}.stat{flex:1;background:#f3f5f9;padding:12px;border-radius:12px;text-align:center}.stat strong{display:block;font-size:19px}.timeline{display:flex;height:23px;border-radius:8px;overflow:hidden;background:#edf0f5;margin:10px 0}.timeline>div{min-width:0}.entry{border-top:1px solid #edf0f5;padding:11px 0;display:flex;justify-content:space-between;gap:8px}.entry small{color:#667085}.entry button{padding:7px;font-size:12px}.legend{display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:13px}.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}canvas{display:block;margin:10px auto;max-width:100%}.notice{padding:10px;background:#fff5db;border-radius:10px;color:#75520c;font-size:12px}.hidden{display:none}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.actions button{font-size:12px}.wide{width:100%}
 .quickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.quickgrid button{padding:13px 5px}.hourgrid{display:grid;grid-template-columns:45px 1fr;gap:0}.hourlabel{font-size:11px;color:#667085;border-top:1px solid #e9edf4;padding-top:3px}.hourlane{height:39px;position:relative;border-top:1px solid #e9edf4}.hourblock{position:absolute;top:0;bottom:0;border-radius:5px;opacity:.9;min-width:2px}.hourgrid .hourlane:nth-child(4n){background:#fafbfe}.weekstack{display:flex;overflow:hidden;border-radius:6px;height:15px;background:#edf0f5;flex:1}.weekstack span{height:100%}#quickStatus{margin-top:6px} </style></head><body><main>
@@ -13,6 +13,7 @@
 <section class="card"><h2>手動補記／修改</h2><form id="form"><input type="hidden" id="editId"><label>日期</label><input type="date" id="entryDate" required><div class="row"><div class="grow"><label>開始</label><input type="time" id="start" required></div><div class="grow"><label>結束</label><input type="time" id="end" required></div></div><div class="muted">結束早於開始代表跨午夜，最長可記 24 小時。</div><label>分類</label><select id="entryCat"></select><label>活動名稱</label><input id="entryTitle" maxlength="100" placeholder="例如：晚餐"><div class="row" style="margin-top:12px"><button type="submit" class="primary grow" id="save">儲存紀錄</button><button type="button" class="secondary hidden" id="cancel">取消修改</button></div></form></section>
 <section class="card"><div class="row"><h2 class="grow">每日儀表板</h2><input id="viewDate" type="date" style="width:155px"></div><div class="row"><div class="stat"><strong id="logged">0 分鐘</strong><span class="muted">已覆蓋時間</span></div><div class="stat"><strong id="missing">24h</strong><span class="muted">未記錄時間</span></div></div><div class="muted" style="margin-top:14px">24 小時活動時間軸（重疊時段以最新建立的紀錄為準）</div><div id="timeline" class="timeline"></div><details><summary style="font-weight:650;cursor:pointer;margin:12px 0">展開每小時活動時間軸</summary><div class="muted">每列代表 1 小時，色塊代表已記錄的活動；重疊時段按最新建立的紀錄顯示。</div><div id="hourTimeline" class="hourgrid" style="margin:12px 0"></div></details><canvas id="chart" width="280" height="280" aria-label="時間分類圓餅圖"></canvas><div id="legend" class="legend"></div><div id="overlap" class="notice hidden" style="margin-top:12px"></div></section>
 <section class="card"><h2>最近 7 天分析</h2><div class="muted">以儀表板所選日期為最後一天，統計各日實際覆蓋時間；重疊時段不重複計算。</div><div id="weekBars" style="margin-top:15px"></div><h2 style="margin-top:18px">7 天分類合計</h2><div id="weekLegend" class="legend"></div></section>
+<section class="card"><h2>🌙 整理今天</h2><p class="muted">先整理目前瀏覽器已有的手動紀錄。未連接 Google 日曆或 Mac，資料不會自動同步。</p><button id="reviewToday" class="primary wide" type="button">整理今天</button><div id="reviewOutput" style="margin-top:12px" aria-live="polite"></div></section>
 <section class="card"><h2>當天紀錄</h2><div id="entries"></div></section>
 <section class="card"><h2>備份與匯出</h2><div class="muted">CSV 可用 Google Sheets 開啟；JSON 可以完整備份及還原。</div><div class="actions"><button class="secondary" id="csv">匯出 CSV</button><button class="secondary" id="backup">備份 JSON</button><button class="secondary" id="restoreBtn">還原 JSON</button><input type="file" id="restore" accept=".json,application/json" class="hidden"></div><p class="muted">資料儲存在此網站的瀏覽器空間。不同網址、私人瀏覽模式或清除網站資料可能使紀錄無法存取。請定期備份。</p></section>
 </main><script>
@@ -80,6 +81,31 @@ $("csv").onclick=()=>{let rows=[["ID","開始時間","結束時間","分類","�
 $("backup").onclick=()=>download("我的時間_備份_"+localDate(new Date())+".json",JSON.stringify({version:1,records},null,2),"application/json");
 $("restoreBtn").onclick=()=>$("restore").click();
 $("restore").onchange=async e=>{let f=e.target.files?.[0];if(!f)return;try{let o=JSON.parse(await f.text());if(!Array.isArray(o.records)||!o.records.every(valid))throw Error("格式不正確");if(!confirm(`將匯入 ${o.records.length} 筆紀錄，並取代目前 ${records.length} 筆紀錄。確定嗎？`))return;records=o.records;persist();render();alert("還原完成")}catch(err){alert("無法還原："+err.message)}finally{e.target.value=""}};
+
+function reviewDay(){
+ const date=localDate(new Date()), lo=ms(date,"00:00"),hi=new Date(new Date(lo).setDate(new Date(lo).getDate()+1)).getTime();
+ const end=Math.min(Date.now(),hi);
+ const arr=records.concat(running?[{...running,end:Date.now()}]:[]).filter(r=>r.end>lo&&r.start<end).map(r=>({...r,start:Math.max(lo,r.start),end:Math.min(end,r.end)}));
+ const points=[lo,end,...arr.flatMap(r=>[r.start,r.end])].filter(t=>t>=lo&&t<=end).sort((a,b)=>a-b);
+ let totals={},gaps=[],overlaps=[];
+ for(let i=0;i<points.length-1;i++){
+   const a=points[i],b=points[i+1];if(b<=a)continue;
+   const active=arr.filter(r=>r.start<b&&r.end>a);
+   if(!active.length){if(gaps.length&&gaps[gaps.length-1][1]===a)gaps[gaps.length-1][1]=b;else gaps.push([a,b]);continue}
+   const chosen=active.find(r=>r.id===running?.id)||active.sort((x,y)=>(y.created||0)-(x.created||0))[0];
+   totals[chosen.category]=(totals[chosen.category]||0)+(b-a);
+   if(active.length>1){if(overlaps.length&&overlaps[overlaps.length-1][1]===a)overlaps[overlaps.length-1][1]=b;else overlaps.push([a,b])}
+ }
+ const fmt=t=>localTime(new Date(t));
+ const line=([a,b])=>`${fmt(a)}～${fmt(b)}（${formatHours(b-a)}）`;
+ const total=Object.values(totals).reduce((a,b)=>a+b,0);
+ const summary=Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="entry"><span>${safeText(k)}</span><strong>${formatHours(v)}</strong></div>`).join("");
+ const gapsHtml=gaps.filter(([a,b])=>b-a>=300000).map(x=>`<li>${line(x)}</li>`).join("");
+ const dupHtml=overlaps.map(x=>`<li>${line(x)}</li>`).join("");
+ $("reviewOutput").innerHTML=`<div class="notice">已整理今天 00:00 至 ${fmt(end)}。這是已記錄時間的摘要，不代表整天活動已完整。</div><p><strong>已記錄：${formatHours(total)}</strong></p>${summary||'<p class="muted">尚無紀錄。</p>'}<h3>待補記時段</h3>${gapsHtml?`<ul>${gapsHtml}</ul>`:'<p class="muted">目前沒有超過 5 分鐘的空白時段。</p>'}<h3>重疊時段</h3>${dupHtml?`<p class="muted">可能重複，請到「當天紀錄」檢查；不會自動刪除。</p><ul>${dupHtml}</ul>`:'<p class="muted">沒有偵測到重疊。</p>'}`;
+ $("viewDate").value=date;render();
+}
+$("reviewToday").onclick=reviewDay;
 $("viewDate").onchange=render;
 $("viewDate").value=localDate(new Date());resetForm();drawCats();drawPresets();updateClock();render();setInterval(()=>{if(running){updateClock();render()}},1000);
 document.addEventListener("visibilitychange",()=>{updateClock();render()});
